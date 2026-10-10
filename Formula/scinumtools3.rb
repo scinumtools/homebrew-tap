@@ -1,10 +1,10 @@
 class Scinumtools3 < Formula
   desc "C++ toolkit for unit-aware scientific computation"
-  homepage "https://github.com/vrtulka23/scinumtools3"
-  url "https://github.com/vrtulka23/scinumtools3/archive/refs/tags/v0.9.1.tar.gz"
-  sha256 "72439b93d7c491861dec3d19078aab5126a1fef6533ef232128df33f4c4b65fc"
+  homepage "https://github.com/scinumtools/snt3"
+  url "https://github.com/scinumtools/snt3/archive/refs/tags/v0.9.3.tar.gz"
+  sha256 "6f68e5d939226ab7aeebafd13a245cab3f8f85e6b74aad9e4b34a951c49bcbfc"
   license "MIT"
-  head "https://github.com/vrtulka23/scinumtools3.git", branch: "main"
+  head "https://github.com/scinumtools/snt3.git", branch: "main"
 
   depends_on "cmake" => :build
   depends_on "ninja" => :build
