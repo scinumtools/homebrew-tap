@@ -1,0 +1,56 @@
+name: Update scinumtools3
+
+on:
+  schedule:
+    - cron: "23 */6 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: update-scinumtools3
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    runs-on: macos-15-intel
+    timeout-minutes: 60
+    steps:
+      - name: Set up Homebrew and check out the tap
+        id: homebrew
+        uses: Homebrew/actions/setup-homebrew@main
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check the latest stable release
+        id: update
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python3 .github/scripts/update_scinumtools3.py
+
+      # GITHUB_TOKEN pushes do not trigger the regular push workflow, so
+      # validate the changed formula here before publishing it.
+      - name: Build and test the updated formula
+        if: steps.update.outputs.changed == 'true'
+        env:
+          FORMULA: ${{ steps.homebrew.outputs.tap-name }}/scinumtools3
+          HOMEBREW_NO_AUTO_UPDATE: "1"
+        run: |
+          brew install --build-from-source "$FORMULA"
+          brew test "$FORMULA"
+
+      - name: Commit and push the formula
+        if: steps.update.outputs.changed == 'true'
+        env:
+          RELEASE_TAG: ${{ steps.update.outputs.tag }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add Formula/scinumtools3.rb
+          git commit -m "scinumtools3: update to ${RELEASE_TAG}"
+          # Reject concurrent changes instead of pushing over them or rebasing
+          # a formula that would then differ from the one just tested.
+          git push origin "HEAD:refs/heads/${DEFAULT_BRANCH}"

@@ -7,6 +7,14 @@ on:
   pull_request:
 
 jobs:
+  release-updater:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 -B -m unittest discover -s .github/scripts -p 'test_*.py'
+
   test-bot:
     strategy:
       matrix:
