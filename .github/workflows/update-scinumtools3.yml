@@ -15,7 +15,9 @@ permissions:
 jobs:
   update:
     if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
-    runs-on: macos-15-intel
+    # Use Apple Silicon so Homebrew can install bottled dependencies.
+    # Intel dependency source builds can exhaust the job timeout on GCC.
+    runs-on: macos-26
     timeout-minutes: 60
     steps:
       - name: Set up Homebrew and check out the tap

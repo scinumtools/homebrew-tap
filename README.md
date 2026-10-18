@@ -27,7 +27,9 @@ default branch.
 For a newer release, it updates the source URL and SHA-256, synchronizes all four
 resource commits with the release's submodules, and calculates their SHA-256s.
 It removes any old bottle block and formula revision, builds from source on
-Intel macOS, and runs the formula's tests. Only a successful build and test is
+Apple Silicon macOS, and runs the formula's tests. This runner can use Homebrew's
+prebuilt dependency bottles, avoiding lengthy GCC builds on Intel macOS.
+Only a successful build and test is
 committed directly to the default branch. No change is made for the same or an
 older version, drafts, or prereleases. Changes to the set of submodules or their
 repositories fail the run for manual review.
